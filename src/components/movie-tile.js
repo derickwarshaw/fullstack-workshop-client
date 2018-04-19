@@ -1,4 +1,7 @@
 import React from 'react';
+import { Mutation, Query } from 'react-apollo';
+import gql from 'graphql-tag';
+
 import Heart from './heart';
 
 const getScoreIcon = score => {
@@ -8,18 +11,56 @@ const getScoreIcon = score => {
   if (score < 2.5) return '👎';
 };
 
-export default ({ title, poster, overview, popularity, score, isLiked }) => (
-  <div style={styles.container}>
-    <img src={poster} style={{ height: 160 }} alt={title} />
-    <div style={styles.content}>
-      <h3 style={{ display: 'inline' }}>{title}</h3>
-      <p>{overview}</p>
-      <p>
-        Rating: {score}/10 {getScoreIcon(score)}
-      </p>
-      <Heart bold active={isLiked} color={isLiked ? 'red' : 'black'} />
-    </div>
-  </div>
+const LIKE_MOVIE_MUTATION = gql`
+  mutation toggleMovieLike($id: ID!) {
+    toggleLike(id: $id) {
+      isLiked
+    }
+  }
+`;
+
+const GET_USER_QUERY = gql`
+  {
+    token @client
+  }
+`;
+
+export default ({
+  title,
+  poster,
+  overview,
+  popularity,
+  score,
+  isLiked,
+  id,
+}) => (
+  <Query query={GET_USER_QUERY}>
+    {({ data: { token }, loading, error }) =>
+      loading || error ? null : (
+        <Mutation mutation={LIKE_MOVIE_MUTATION}>
+          {(toggleMovieLike, { data }) => (
+            <div style={styles.container}>
+              <img src={poster} style={{ height: 160 }} alt={title} />
+              <div style={styles.content}>
+                <h3 style={{ display: 'inline' }}>{title}</h3>
+                <p style={styles.p}>{overview}</p>
+                <p>
+                  Rating: {score}/10 {getScoreIcon(score)}
+                </p>
+                <div onClick={() => toggleMovieLike({ variables: { id } })}>
+                  <Heart
+                    bold
+                    active={isLiked}
+                    color={isLiked ? 'red' : 'black'}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </Mutation>
+      )
+    }
+  </Query>
 );
 
 const styles = {
@@ -35,5 +76,8 @@ const styles = {
   },
   content: {
     marginLeft: 8,
+  },
+  p: {
+    marginTop: 8,
   },
 };

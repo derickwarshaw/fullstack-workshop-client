@@ -2,40 +2,15 @@ import React, { Component } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import MovieTile from './components/movie-tile';
-
-const MOVIES_QUERY = gql`
-  {
-    movies {
-      id
-      title
-      isLiked
-      score
-      overview
-      popularity
-      isLiked
-      poster
-    }
-  }
-`;
+import Login from './components/login';
+import MovieList from './components/movie-list';
 
 class App extends Component {
   render() {
     return (
       <div className="App" style={styles.container}>
-        <Query query={MOVIES_QUERY}>
-          {({ loading, error, data }) =>
-            loading || error ? (
-              <div />
-            ) : (
-              <div>
-                {data.movies.map(movie => (
-                  <MovieTile key={movie.id} {...movie} />
-                ))}
-              </div>
-            )
-          }
-        </Query>
+        <Login />
+        <MovieList />
       </div>
     );
   }
