@@ -34,7 +34,11 @@ export default class Login extends Component {
             {(authorize, { data }) =>
               !user || !user.email ? (
                 <div style={styles.container}>
-                  <input type="text" onChange={this.handleTextInput} />
+                  <input
+                    type="text"
+                    onChange={this.handleTextInput}
+                    placeholder="email"
+                  />
                   <button
                     onClick={() =>
                       authorize({ variables: { email: this.state.text } })

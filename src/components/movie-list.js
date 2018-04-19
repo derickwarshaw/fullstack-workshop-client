@@ -20,8 +20,8 @@ const MOVIES_QUERY = gql`
     }
   }
 
-  query movieList($sort: SORT_TYPE, $showLikes: Boolean!) {
-    movies(sort: $sort) @skip(if: $showLikes) {
+  query movieList($sort: SORT_TYPE, $showLikes: Boolean!, $page: Int!) {
+    movies(sort: $sort, page: $page) @skip(if: $showLikes) {
       ...MovieInfo
     }
     likes @include(if: $showLikes) {
@@ -31,7 +31,7 @@ const MOVIES_QUERY = gql`
 `;
 
 export default class MovieList extends Component {
-  state = { sort: null };
+  state = { sort: null, page: 1 };
 
   getSortValue = option => {
     switch (option.toLowerCase()) {
@@ -49,12 +49,12 @@ export default class MovieList extends Component {
     return (
       <Query
         query={MOVIES_QUERY}
-        variables={{ showLikes: false }}
+        variables={{ showLikes: false, page: 1 }}
         context={{
           headers: { authorization: user && user.token ? user.token : '' },
         }}
       >
-        {({ loading, error, data, refetch }) =>
+        {({ loading, error, data, refetch, fetchMore }) =>
           loading || error ? (
             <div>Loading...</div>
           ) : (
@@ -62,12 +62,12 @@ export default class MovieList extends Component {
               <select
                 style={{ marginBottom: 8 }}
                 onChange={({ target: { value } }) => {
+                  const sort = this.getSortValue(value);
+                  this.setState(s => ({ sort }));
                   refetch({
-                    sort:
-                      this.getSortValue(value) === 'LIKES'
-                        ? null
-                        : this.getSortValue(value),
-                    showLikes: this.getSortValue(value) === 'LIKES',
+                    sort: sort === 'LIKES' ? null : sort,
+                    showLikes: sort === 'LIKES',
+                    page: 1,
                   });
                 }}
                 defaultValue={'default'}
@@ -82,6 +82,28 @@ export default class MovieList extends Component {
               {(data.movies || data.likes).map(movie => (
                 <MovieTile key={movie.id} movie={movie} user={user} />
               ))}
+              <button
+                onClick={() => {
+                  const page = this.state.page + 1;
+                  this.setState(s => ({ page }));
+                  return fetchMore({
+                    variables: {
+                      page,
+                      sort: this.state.sort,
+                      showLikes: this.state.sort === 'LIKES',
+                    },
+                    updateQuery: (prev, { fetchMoreResult }) => {
+                      if (!fetchMoreResult) return prev;
+                      return {
+                        ...prev,
+                        movies: [...prev.movies, ...fetchMoreResult.movies],
+                      };
+                    },
+                  });
+                }}
+              >
+                Load More
+              </button>
             </div>
           )
         }
