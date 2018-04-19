@@ -14,6 +14,7 @@ const getScoreIcon = score => {
 const LIKE_MOVIE_MUTATION = gql`
   mutation toggleMovieLike($id: ID!) {
     toggleLike(id: $id) {
+      id
       isLiked
     }
   }
@@ -48,6 +49,7 @@ export default ({
                   variables: { id },
                   optimisticResponse: {
                     __typename: 'Movie',
+                    id,
                     isLiked: !isLiked,
                   },
                 })
