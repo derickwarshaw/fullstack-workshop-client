@@ -19,48 +19,51 @@ const LIKE_MOVIE_MUTATION = gql`
   }
 `;
 
-const GET_USER_QUERY = gql`
-  {
-    token @client
-  }
-`;
-
 export default ({
-  title,
-  poster,
-  overview,
-  popularity,
-  score,
-  isLiked,
-  id,
+  movie: { title, poster, overview, popularity, score, isLiked, id },
+  user,
 }) => (
-  <Query query={GET_USER_QUERY}>
-    {({ data: { token }, loading, error }) =>
-      loading || error ? null : (
-        <Mutation mutation={LIKE_MOVIE_MUTATION}>
-          {(toggleMovieLike, { data }) => (
-            <div style={styles.container}>
-              <img src={poster} style={{ height: 160 }} alt={title} />
-              <div style={styles.content}>
-                <h3 style={{ display: 'inline' }}>{title}</h3>
-                <p style={styles.p}>{overview}</p>
-                <p>
-                  Rating: {score}/10 {getScoreIcon(score)}
-                </p>
-                <div onClick={() => toggleMovieLike({ variables: { id } })}>
-                  <Heart
-                    bold
-                    active={isLiked}
-                    color={isLiked ? 'red' : 'black'}
-                  />
-                </div>
-              </div>
+  <Mutation
+    mutation={LIKE_MOVIE_MUTATION}
+    context={{
+      headers: { authorization: user && user.token ? user.token : '' },
+    }}
+  >
+    {(toggleMovieLike, { data }) => {
+      const movieIsLiked =
+        isLiked || (data && data.toggleLike && data.toggleLike.isLiked);
+
+      return (
+        <div style={styles.container}>
+          <img src={poster} style={{ height: 160 }} alt={title} />
+          <div style={styles.content}>
+            <h3 style={{ display: 'inline' }}>{title}</h3>
+            <p style={styles.p}>{overview}</p>
+            <p>
+              Rating: {score}/10 {getScoreIcon(score)}
+            </p>
+            <div
+              onClick={() =>
+                toggleMovieLike({
+                  variables: { id },
+                  optimisticResponse: {
+                    __typename: 'Movie',
+                    isLiked: !isLiked,
+                  },
+                })
+              }
+            >
+              <Heart
+                bold
+                active={movieIsLiked}
+                color={movieIsLiked ? 'red' : 'black'}
+              />
             </div>
-          )}
-        </Mutation>
-      )
-    }
-  </Query>
+          </div>
+        </div>
+      );
+    }}
+  </Mutation>
 );
 
 const styles = {

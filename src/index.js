@@ -10,16 +10,10 @@ const client = new ApolloClient({
   uri: 'http://localhost:8001/graphql',
   clientState: {
     defaults: {
-      token: 'ZGF3a2luc2poQGdtYWlsLmNvbQ==',
-      email: 'dawkinsjh@gmail.com',
-    },
-    resolvers: {
-      // Mutation: {
-      //   updateNetworkStatus: (_, { isConnected }, { cache }) => {
-      //     cache.writeData({ data: { isConnected }});
-      //     return null;
-      //   }
-      // }
+      // token: 'ZGF3a2luc2poQGdtYWlsLmNvbQ==',
+      // email: 'dawkinsjh@gmail.com',
+      token: null,
+      email: null,
     },
   },
 });

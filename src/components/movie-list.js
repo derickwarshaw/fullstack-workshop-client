@@ -13,7 +13,6 @@ const MOVIES_QUERY = gql`
       score
       overview
       popularity
-      isLiked
       poster
       cast {
         name
@@ -24,14 +23,22 @@ const MOVIES_QUERY = gql`
   }
 `;
 
-export default ({ onLoginPress, onLogoutPress }) => (
-  <Query query={MOVIES_QUERY}>
+export default ({ onLoginPress, onLogoutPress, user }) => (
+  <Query
+    query={MOVIES_QUERY}
+    context={{
+      headers: { authorization: user && user.token ? user.token : '' },
+    }}
+  >
     {({ loading, error, data }) =>
       loading || error ? (
         <div>Loading...</div>
       ) : (
         <div>
-          {data.movies.map(movie => <MovieTile key={movie.id} {...movie} />)}
+          {data.movies.map(movie => {
+            console.log(movie);
+            return <MovieTile key={movie.id} movie={movie} user={user} />;
+          })}
         </div>
       )
     }

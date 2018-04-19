@@ -1,43 +1,69 @@
 import React, { Component } from 'react';
-import { Query } from 'react-apollo';
+import { Mutation, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
 
-const GET_USER_QUERY = gql`
-  {
-    user @client
+const AUTHORIZE_MUTATION = gql`
+  mutation authorize($email: String!) {
+    authorize(email: $email)
   }
 `;
 
-const UPDATE_LOCAL_USER_MUTATION = gql`
-  mutation updateUser($token: String, $email: String) {
-    updateUser(token: $token, email: $email) @client
-  }
-`;
+export default class Login extends Component {
+  state = {
+    text: '',
+  };
 
-const AUTHENTICATE_MUTATION = gql`
-  mutation authenticate($email: String) {
-    authenticate(email: $email)
-  }
-`;
+  handleTextInput = event => {
+    const text = event.target.value;
+    this.setState(() => ({ text }));
+  };
 
-export default ({ onLoginPress, onLogoutPress }) => (
-  <Query query={GET_USER_QUERY}>
-    {({ data: { email }, loading, error }) => {
-      console.log(email);
-      return loading || error || !email ? (
-        <div style={styles.container}>
-          <input type="text" />
-          <button onPress={onLoginPress}>Log In</button>
-        </div>
-      ) : (
-        <div style={styles.container}>
-          <p>{email}</p>
-          <button onPress={onLogoutPress}>Log Out</button>
-        </div>
-      );
-    }}
-  </Query>
-);
+  render = () => {
+    const { user } = this.props;
+    return (
+      <ApolloConsumer>
+        {cache => (
+          <Mutation
+            mutation={AUTHORIZE_MUTATION}
+            onCompleted={data => {
+              cache.writeData({
+                data: { email: this.state.text, token: data.authorize },
+              });
+            }}
+          >
+            {(authorize, { data }) =>
+              !user || !user.email ? (
+                <div style={styles.container}>
+                  <input type="text" onChange={this.handleTextInput} />
+                  <button
+                    onClick={() =>
+                      authorize({ variables: { email: this.state.text } })
+                    }
+                  >
+                    Log In
+                  </button>
+                </div>
+              ) : (
+                <div style={styles.container}>
+                  <p>{user.email}</p>
+                  <button
+                    onClick={() =>
+                      cache.writeData({
+                        data: { email: null, token: null },
+                      })
+                    }
+                  >
+                    Log Out
+                  </button>
+                </div>
+              )
+            }
+          </Mutation>
+        )}
+      </ApolloConsumer>
+    );
+  };
+}
 
 const styles = {
   container: { marginBottom: 16, width: '100%', textAlign: 'right' },
