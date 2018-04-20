@@ -7,11 +7,18 @@ import './index.css';
 import App from './App';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:8001/graphql',
+  uri: 'http://localhost:3000/graphql',
+  request: operation => {
+    operation.setContext(context => ({
+      headers: {
+        ...context.headers,
+        authorization: localStorage.getItem('token'),
+      },
+    }));
+  },
   clientState: {
     defaults: {
-      token: null,
-      email: null,
+      isLoggedIn: !!localStorage.getItem('token'),
     },
   },
 });

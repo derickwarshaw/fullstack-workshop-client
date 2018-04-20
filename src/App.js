@@ -1,36 +1,33 @@
 import React, { Component } from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
 
-import Login from './components/login';
-import MovieList from './components/movie-list';
-
-const GET_USER_QUERY = gql`
-  {
-    token @client
-    email @client
-  }
-`;
+import Login from './components/Login';
+import MovieList from './components/MovieList';
 
 class App extends Component {
   render() {
     return (
-      <Query query={GET_USER_QUERY}>
-        {({ data: { email, token }, loading, error }) => {
-          return loading || error ? null : (
-            <div className="App" style={styles.container}>
-              <Login user={email ? { email, token } : null} />
-              <MovieList user={email ? { email, token } : null} />
-            </div>
-          );
-        }}
-      </Query>
+      <div style={styles.container}>
+        <div style={styles.header}>
+          <h1 style={styles.title}>My Favorite Movies 🎬</h1>
+          <Login />
+        </div>
+        <MovieList />
+      </div>
     );
   }
 }
 
 const styles = {
   container: { maxWidth: 900, margin: '16px auto' },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    width: '100%',
+  },
 };
 
 export default App;

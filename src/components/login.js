@@ -1,72 +1,66 @@
 import React, { Component } from 'react';
-import { Mutation, ApolloConsumer } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
-const AUTHORIZE_MUTATION = gql`
-  mutation authorize($email: String!) {
-    authorize(email: $email)
+const IS_LOGGED_IN = gql`
+  {
+    isLoggedIn @client
+  }
+`;
+
+const LOGIN_USER = gql`
+  mutation loginUser($email: String!) {
+    login(email: $email)
   }
 `;
 
 export default class Login extends Component {
-  state = {
-    text: '',
-  };
+  constructor(props) {
+    super(props);
+    this.input = React.createRef();
+  }
 
-  handleTextInput = event => {
-    const text = event.target.value;
-    this.setState(() => ({ text }));
-  };
-
-  render = () => {
-    const { user } = this.props;
-    return (
-      <ApolloConsumer>
-        {cache => (
-          <Mutation
-            mutation={AUTHORIZE_MUTATION}
-            onCompleted={data => {
-              cache.writeData({
-                data: { email: this.state.text, token: data.authorize },
-              });
-            }}
-          >
-            {(authorize, { data }) =>
-              !user || !user.email ? (
-                <div style={styles.container}>
-                  <input
-                    type="text"
-                    onChange={this.handleTextInput}
-                    placeholder="email"
-                  />
-                  <button
-                    onClick={() =>
-                      authorize({ variables: { email: this.state.text } })
-                    }
-                  >
-                    Log In
-                  </button>
-                </div>
+  render = () => (
+    <Query query={IS_LOGGED_IN}>
+      {({ data: { isLoggedIn }, client }) => (
+        <Mutation
+          mutation={LOGIN_USER}
+          onCompleted={({ login }) => {
+            localStorage.setItem('token', login);
+            client.writeData({ data: { isLoggedIn: true } });
+          }}
+        >
+          {login => (
+            <div style={styles.container}>
+              {isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    client.writeData({ data: { isLoggedIn: false } });
+                    localStorage.clear();
+                  }}
+                >
+                  Log Out
+                </button>
               ) : (
-                <div style={styles.container}>
-                  <p>{user.email}</p>
-                  <button
-                    onClick={() =>
-                      cache.writeData({
-                        data: { email: null, token: null },
-                      })
-                    }
-                  >
-                    Log Out
-                  </button>
-                </div>
-              )
-            }
-          </Mutation>
-        )}
-      </ApolloConsumer>
-    );
-  };
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    const email = this.input.current.value;
+                    login({
+                      variables: { email },
+                    });
+                  }}
+                >
+                  <input type="text" ref={this.input} placeholder="Email" />
+                  <button className="button">Log in</button>
+                </form>
+              )}
+            </div>
+          )}
+        </Mutation>
+      )}
+    </Query>
+  );
 }
 
 const styles = {
