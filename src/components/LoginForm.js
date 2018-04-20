@@ -13,14 +13,6 @@ TODO: Apollo Link State:
 */
 
 import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-
-const LOGIN_USER = gql`
-  mutation loginUser($email: String!) {
-    login(email: $email)
-  }
-`;
 
 export default class Login extends Component {
   constructor(props) {
@@ -35,42 +27,27 @@ export default class Login extends Component {
   }
 
   render = () => (
-    <Mutation
-      mutation={LOGIN_USER}
-      onCompleted={({ login }) => {
-        localStorage.setItem('token', login);
-        this.setState({ isLoggedIn: true });
-      }}
-    >
-      {login => (
-        <div style={styles.container}>
-          {this.state.isLoggedIn ? (
-            <button
-              onClick={() => {
-                this.setState({ isLoggedIn: false }, () =>
-                  localStorage.clear(),
-                );
-              }}
-            >
-              Log Out
-            </button>
-          ) : (
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-                const email = this.input.current.value;
-                login({
-                  variables: { email },
-                });
-              }}
-            >
-              <input type="text" ref={this.input} placeholder="Email" />
-              <button className="button">Log in</button>
-            </form>
-          )}
-        </div>
+    <div style={styles.container}>
+      {this.state.isLoggedIn ? (
+        <button
+          onClick={() => {
+            this.setState({ isLoggedIn: false }, () => localStorage.clear());
+          }}
+        >
+          Log Out
+        </button>
+      ) : (
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            const email = this.input.current.value;
+          }}
+        >
+          <input type="text" ref={this.input} placeholder="Email" />
+          <button className="button">Log in</button>
+        </form>
       )}
-    </Mutation>
+    </div>
   );
 }
 
