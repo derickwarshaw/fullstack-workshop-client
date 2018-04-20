@@ -16,11 +16,6 @@ const client = new ApolloClient({
       },
     }));
   },
-  clientState: {
-    defaults: {
-      isLoggedIn: !!localStorage.getItem('token'),
-    },
-  },
 });
 
 ReactDOM.render(
