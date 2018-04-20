@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Login from './components/Login';
+import Login from './components/LoginForm';
 import MovieList from './components/MovieList';
 
 class App extends Component {

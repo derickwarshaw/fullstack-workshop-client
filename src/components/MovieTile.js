@@ -3,7 +3,7 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { GET_LIKED_MOVIES } from './MovieList';
-import Heart from './Heart';
+import Heart from './HeartIcon';
 
 const TOGGLE_MOVIE_LIKE = gql`
   mutation toggleMovieLike($id: ID!) {
