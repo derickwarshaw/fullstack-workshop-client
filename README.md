@@ -11,12 +11,17 @@ Welcome to the client portion of the workshop! For the morning session, we will 
 
 ## Running on CodeSandbox
 
-### Branches
-- `00-start`: Your starting point
-- `01-apollo-client`: Setting up Apollo Boost and React Apollo
-- `02-queries`: Writing Query components
-- `03-mutations`: Writing Mutation components & authentication
-- `04-final`: Local state management with apollo-link-state
+[![Edit fullstack-workshop-client](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/apollographql/fullstack-workshop-client/tree/00-start/)
+
+1. Click the button above to navigate to the CodeSandbox. Fork it to your account by clicking Fork in the top menu.
+2. That's it! CodeSandbox features HMR, a console, and a test runner. It's pretty awesome. 😍
+
+### Sandboxes
+- [`00-start`](https://codesandbox.io/s/github/apollographql/fullstack-workshop-client/tree/00-start): Your starting point
+- [`01-apollo-client`](https://codesandbox.io/s/github/apollographql/fullstack-workshop-client/tree/01-apollo-client): Setting up Apollo Boost and React Apollo
+- [`02-queries`](https://codesandbox.io/s/github/apollographql/fullstack-workshop-client/tree/02-queries): Writing Query components
+- [`03-mutations`](https://codesandbox.io/s/github/apollographql/fullstack-workshop-client/tree/03-mutations): Writing Mutation components & authentication
+- [`04-final`](https://codesandbox.io/s/github/apollographql/fullstack-workshop-client): Local state management with apollo-link-state
 
 ## FAQ
 - **I didn't complete the last exercise and want to catch up**: No worries! Each branch is its own CodeSandbox so everyone can go at their own pace. To check out the completed solution for your exercise, just click the CodeSandbox links above.
