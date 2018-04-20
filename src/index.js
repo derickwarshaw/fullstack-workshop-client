@@ -7,7 +7,7 @@ import './index.css';
 import App from './App';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:3000/graphql',
+  uri: 'https://fullstack-workshop-server.glitch.me/graphql',
   request: operation => {
     operation.setContext(context => ({
       headers: {
