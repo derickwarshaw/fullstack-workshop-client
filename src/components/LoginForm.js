@@ -1,3 +1,17 @@
+/*
+TODO: Creating a mutation component (part 1):
+
+1. Create a Mutation component to login the user
+2. Use the onCompleted prop on Mutation to set whether the user is logged in
+*/
+
+/*
+TODO: Apollo Link State:
+
+1. Refactor the setState calls to client.writeData calls to set whether the user is logged in
+2. Query whether the user is logged in one level above the Mutation component.
+*/
+
 import React, { Component } from 'react';
 import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';

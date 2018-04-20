@@ -1,3 +1,18 @@
+/*
+TODO: Mutation components
+
+PART 2:
+1. Hook up the toggleLike mutation to the Heart component
+2. Add an optimistic response so our UI feels snappy
+Once you have it working, do you notice anything strange about the UI?
+Navigate to the liked movies list and try liking/unliking some movies
+
+We need a way to update the cache after a mutation!
+Read this docs page: https://www.apollographql.com/docs/react/essentials/mutations.html#update
+Bonus! Try to implement the update function yourself.
+We'll do it together after this exercise.
+*/
+
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
